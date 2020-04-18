@@ -1,11 +1,19 @@
 <template>
   <div class="carousel-wrapper">
-    <p>Nome</p>
-    <p>
-      Endereço: Rua sandra Regina - 150<br>
-      Vila Crett - Carapícuiba - SP<br>
-      cep: 06386-400
-    </p>
+    <div v-if="userSelect">
+      <p>Nome: {{userSelect.name}}</p>
+      <p>
+        <strong>Endereço:</strong>
+        <br>
+        <strong>Rua:</strong> {{userSelect.address.street}} - {{userSelect.address.suite}}<br>
+        <strong>Cidade:</strong> {{userSelect.address.city}}<br>
+        <strong>Cep:</strong> {{userSelect.address.zipcode}}
+      </p>
+    </div>
+
+    <div v-else>
+      <p>Carregando...</p>
+    </div>
 
     <carousel
       :starting-image="1"
@@ -17,7 +25,9 @@
 </template>
 
 <script>
- import Carousel from '@/components/Carousel'
+import Carousel from '@/components/Carousel'
+import { mapGetters, mapActions } from 'vuex';
+import PhotoService from '@/services/PhotoService'
 
 export default {
   name: 'slide-content',
@@ -26,31 +36,38 @@ export default {
     Carousel
   },
 
+  computed: {
+    ...mapGetters({
+      albumByUserId: 'albumByUserId',
+      userSelect: 'userSelect'
+    }),
+  },
+
   data() {
     return {
-       images: [
-        {
-            id: '1',
-            big: 'https://images.madeiramadeira.com.br/product/images/99157190-adesivo-parede-paisagem-estrada-viagem-natureza-gg567prdfs89loibybfcc-179-1-800x729.jpg',
-            thumb: 'https://images.madeiramadeira.com.br/product/images/99157190-adesivo-parede-paisagem-estrada-viagem-natureza-gg567prdfs89loibybfcc-179-1-800x729.jpg'
-        },
-        {
-            id: '2',
-             big: 'https://images.madeiramadeira.com.br/product/images/99157190-adesivo-parede-paisagem-estrada-viagem-natureza-gg567prdfs89loibybfcc-179-1-800x729.jpg',
-            thumb: 'https://i.pinimg.com/originals/61/a8/5b/61a85bc5fe12ca980d085d203e83bc3a.jpg'
-        },
-        {
-            id: '3',
-            big: 'https://images.madeiramadeira.com.br/product/images/99157190-adesivo-parede-paisagem-estrada-viagem-natureza-gg567prdfs89loibybfcc-179-1-800x729.jpg',
-            thumb: 'https://i.pinimg.com/originals/61/a8/5b/61a85bc5fe12ca980d085d203e83bc3a.jpg'
-        },
-        {
-            id: '4',
-            big: 'https://images.madeiramadeira.com.br/product/images/99157190-adesivo-parede-paisagem-estrada-viagem-natureza-gg567prdfs89loibybfcc-179-1-800x729.jpg',
-            thumb: 'https://i.pinimg.com/originals/61/a8/5b/61a85bc5fe12ca980d085d203e83bc3a.jpg'
-        }
-      ]
+      PhotoService: null,
+      images: []
     }
+  },
+
+  created() {
+    this.PhotoService = new PhotoService();
+    this.setAlbumInit()
+  },
+
+  methods: {
+    ...mapActions({
+      updateAlbumByUserId: 'updateAlbumByUserId',
+    }),
+    setAlbumInit(){
+      this.PhotoService.getAlbumById('1').then((response) => {
+        this.updateAlbumByUserId(response.data)
+      }).catch((error) => {
+        console.log(error)
+      }).finally(() => {
+        this.images = this.albumByUserId;
+      })
+    },
   }
 }
 </script>

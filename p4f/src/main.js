@@ -6,6 +6,7 @@ import router from './router'
 import Vuex from 'vuex'
 
 import { BootstrapVue, IconsPlugin } from 'bootstrap-vue'
+import store from './store/index'
 
 // Install BootstrapVue
 Vue.use(BootstrapVue)
@@ -20,6 +21,7 @@ Vue.config.productionTip = false
 new Vue({
   el: '#app',
   router,
+  store,
   components: { App },
   template: '<App/>'
 })

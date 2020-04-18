@@ -8,18 +8,17 @@
             width="100px"
             alt="logo">
           </b-img>
-
           <p>Front End Challenge</p>
         </div>
       </b-col>
     </b-row>
 
     <b-row align="left">
-      <b-col sm="3">
+      <b-col sm="12" lg="3">
         <card-profile></card-profile>
       </b-col>
 
-      <b-col sm="9">
+      <b-col sm="12" lg="9">
         <navigator>
         </navigator>
 
@@ -34,6 +33,8 @@
 import CardProfile from '@/components/CardProfile'
 import Navigator from '@/components/Navigator'
 import SlideContent from '@/components/SlideContent'
+import { mapActions } from 'vuex';
+import PhotoService from '@/services/PhotoService'
 
 export default {
   name: 'photos',
@@ -42,6 +43,32 @@ export default {
     CardProfile,
     Navigator,
     SlideContent
+  },
+
+  data() {
+    return {
+      PhotoService: null
+    }
+  },
+
+  created() {
+    this.PhotoService = new PhotoService();
+    this.getUserList()
+  },
+
+  methods: {
+    ...mapActions({
+      updateUserList: 'updateUserList',
+      updateUserSelect: 'updateUserSelect'
+    }),
+    getUserList() {
+      this.PhotoService.getUserList().then((response) => {
+        this.updateUserList(response.data)
+        this.updateUserSelect(response.data[0])
+      }).catch((error) => {
+        console.log(error)
+      })
+    },
   }
 }
 </script>
