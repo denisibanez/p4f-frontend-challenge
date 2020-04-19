@@ -19,11 +19,20 @@
       </b-col>
 
       <b-col sm="12" lg="9">
-        <navigator>
-        </navigator>
-
-        <slide-content>
-        </slide-content>  
+        <b-card no-body>
+          <b-tabs pills card>
+            <address-info>
+            </address-info>
+            <b-tab title="Fotos" active>
+              <slide-content>
+              </slide-content>  
+            </b-tab>
+            <b-tab title="Posts">
+              <card-post>
+              </card-post>
+            </b-tab>
+          </b-tabs>
+        </b-card>
       </b-col>
     </b-row>
   </b-container>
@@ -31,35 +40,37 @@
 
 <script>
 import CardProfile from '@/components/CardProfile'
-import Navigator from '@/components/Navigator'
+import CardPost from '@/components/CardPost'
+import AddressInfo from '@/components/AddressInfo'
 import SlideContent from '@/components/SlideContent'
-import { mapActions } from 'vuex';
+import { mapActions } from 'vuex'
 import PhotoService from '@/services/PhotoService'
 
 export default {
-  name: 'photos',
+  name: 'home',
 
   components: {
     CardProfile,
-    Navigator,
-    SlideContent
+    AddressInfo,
+    SlideContent,
+    CardPost,
   },
 
   data() {
     return {
-      PhotoService: null
+      PhotoService: null,
     }
   },
 
   created() {
-    this.PhotoService = new PhotoService();
+    this.PhotoService = new PhotoService()
     this.getUserList()
   },
 
   methods: {
     ...mapActions({
       updateUserList: 'updateUserList',
-      updateUserSelect: 'updateUserSelect'
+      updateUserSelect: 'updateUserSelect',
     }),
     getUserList() {
       this.PhotoService.getUserList().then((response) => {

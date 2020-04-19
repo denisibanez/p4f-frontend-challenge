@@ -1,22 +1,7 @@
 <template>
   <div class="carousel-wrapper">
-    <div v-if="userSelect">
-      <p>Nome: {{userSelect.name}}</p>
-      <p>
-        <strong>Endereço:</strong>
-        <br>
-        <strong>Rua:</strong> {{userSelect.address.street}} - {{userSelect.address.suite}}<br>
-        <strong>Cidade:</strong> {{userSelect.address.city}}<br>
-        <strong>Cep:</strong> {{userSelect.address.zipcode}}
-      </p>
-    </div>
-
-    <div v-else>
-      <p>Carregando...</p>
-    </div>
-
     <carousel
-      :starting-image="1"
+      :starting-image="0"
       :images="images"
       :auto-slide-interval="2500"
       :show-progress-bar="true"
@@ -26,32 +11,31 @@
 
 <script>
 import Carousel from '@/components/Carousel'
-import { mapGetters, mapActions } from 'vuex';
+import { mapGetters, mapActions } from 'vuex'
 import PhotoService from '@/services/PhotoService'
 
 export default {
   name: 'slide-content',
 
   components: {
-    Carousel
+    Carousel,
   },
 
   computed: {
     ...mapGetters({
       albumByUserId: 'albumByUserId',
-      userSelect: 'userSelect'
     }),
   },
 
   data() {
     return {
       PhotoService: null,
-      images: []
+      images: [],
     }
   },
 
   created() {
-    this.PhotoService = new PhotoService();
+    this.PhotoService = new PhotoService()
     this.setAlbumInit()
   },
 
@@ -68,6 +52,12 @@ export default {
         this.images = this.albumByUserId;
       })
     },
+  },
+
+  watch: {
+    albumByUserId(value) {
+      this.images = value
+    }
   }
 }
 </script>

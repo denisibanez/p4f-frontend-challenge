@@ -37,6 +37,8 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+
 export default {
   name: 'Carousel',
 
@@ -47,7 +49,7 @@ export default {
       stopSlider: false,
       timeLeft: 0,
       timerInterval: null,
-      countdownInterval: 10
+      countdownInterval: 10,
     }
   },
 
@@ -59,12 +61,15 @@ export default {
   ],
   
   computed: {
+    ...mapGetters({
+      albumByUserId: 'albumByUserId',
+    }),
     currentImage() {
-      this.timeLeft = this.autoSlideInterval;
-      return this.images[this.activeImage].url;
+      this.timeLeft = this.autoSlideInterval
+      return this.images[this.activeImage].url
     },
     progressBar() {
-      return 100 - (this.timeLeft/this.autoSlideInterval) * 100;
+      return 100 - (this.timeLeft/this.autoSlideInterval) * 100
     }
   },
 
@@ -72,64 +77,70 @@ export default {
     if(this.startingImage 
       && this.startingImage >= 0
       && this.startingImage < this.images.length) {
-      this.activeImage = this.startingImage;
+      this.activeImage = this.startingImage
     }
 
     if(this.autoSlideInterval && this.autoSlideInterval > this.countdownInterval) {
-      this.startTimer(this.autoSlideInterval);
-      this.timeLeft = this.autoSlideInterval;
-      this.startCountdown();
+      this.startTimer(this.autoSlideInterval)
+      this.timeLeft = this.autoSlideInterval
+      this.startCountdown()
     }
   },
   
   methods: {
     nextImage() {
-      var active = this.activeImage + 1;
+      var active = this.activeImage + 1
       if(active >= this.images.length) {
-        active = 0;
+        active = 0
       }
-      this.activateImage(active);
+      this.activateImage(active)
     },
     prevImage() {
-      var active = this.activeImage - 1;
+      var active = this.activeImage - 1
       if(active < 0) {
-        active = this.images.length - 1;
+        active = this.images.length - 1
       }
-      this.activateImage(active);            
+      this.activateImage(active)         
     },
     activateImage(imageIndex) {
-      this.activeImage = imageIndex;
+      this.activeImage = imageIndex
     },
     startTimer(interval) {
       if(interval && interval > 0 && !this.stopSlider) {
-        var self = this;
-        clearTimeout(this.autoSlideTimeout);
+        var self = this
+        clearTimeout(this.autoSlideTimeout)
         this.autoSlideTimeout = setTimeout(function() {
-          self.nextImage();
-          self.startTimer(self.autoSlideInterval);
-        }, interval);
+          self.nextImage()
+          self.startTimer(self.autoSlideInterval)
+        }, interval)
       }
     },
     stopTimer() {
-      clearTimeout(this.autoSlideTimeout);
-      this.stopSlider = true;
-      clearInterval(this.timerInterval);
+      clearTimeout(this.autoSlideTimeout)
+      this.stopSlider = true
+      clearInterval(this.timerInterval)
     },
     restartTimer() {
-      this.stopSlider = false;
-      clearInterval(this.timerInterval);
-      this.startCountdown();
-      this.startTimer(this.timeLeft);
+      this.stopSlider = false
+      clearInterval(this.timerInterval)
+      this.startCountdown()
+      this.startTimer(this.timeLeft)
     },
     startCountdown() {
-      if(!this.showProgressBar) return;
-      var self = this;
+      if(!this.showProgressBar) return
+      var self = this
       this.timerInterval = setInterval(function() {
-        self.timeLeft -= self.countdownInterval;
+        self.timeLeft -= self.countdownInterval
         if(self.timeLeft <= 0) {
-          self.timeLeft = self.autoSlideInterval;
+          self.timeLeft = self.autoSlideInterval
         }
-      }, this.countdownInterval);
+      }, this.countdownInterval)
+    }
+  },
+
+  watch: {
+    albumByUserId() {
+      this.activeImage = 0
     }
   }
 }

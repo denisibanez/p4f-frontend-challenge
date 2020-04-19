@@ -27,15 +27,17 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex';
+import { mapGetters, mapActions } from 'vuex'
 import PhotoService from '@/services/PhotoService'
+import PostService from '@/services/PostService'
 
 export default {
   name: 'card-profile',
 
   data() {
     return {
-      PhotoService: null
+      PhotoService: null,
+      PostService: null,
     }
   },
 
@@ -46,18 +48,27 @@ export default {
   },
 
   created() {
-    this.PhotoService = new PhotoService();
+    this.PhotoService = new PhotoService()
+    this.PostService = new PostService()
   },
 
   methods: {
     ...mapActions({
       updateUserSelect: 'updateUserSelect',
       updateAlbumByUserId: 'updateAlbumByUserId',
+      updatePostListByUserId: 'updatePostListByUserId',
     }),
     setUserSelected($event) {
       this.updateUserSelect($event)
+
       this.PhotoService.getAlbumById($event.id).then((response) => {
         this.updateAlbumByUserId(response.data)
+      }).catch((error) => {
+        console.log(error)
+      })
+      
+      this.PostService.getPostListById($event.id).then((response) => {
+        this.updatePostListByUserId(response.data)
       }).catch((error) => {
         console.log(error)
       })
